@@ -3,32 +3,30 @@ import ipywidgets as widgets
 
 pd.options.mode.chained_assignment = None # just hide ennoying errors
 
-# TODO debug define colors for trial types
-trialtype_colors = {
-    "trial_maintenance_right":      (0.3,   0.7,    0),
-    "trial_maintenance_left":       (0.3,   1,      0),
-    "trial_occlusion_cursor_right": (0,     0.7,    0.3),
-    "trial_occlusion_cursor_left":  (0,     1,      0.3),
-    "trial_occlusion_target_right": (0,     0.7,    0),
-    "trial_occlusion_target_left":  (0,     1,      0),
-    "trial_emulation_right":        (0.3,   0.7,    0.3),
-    "trial_emulation_left":         (0.3,   1,      0.3),
-    "trial_check_right":            (0.5,   0.7,    0.5),
-    "trial_check_left":             (0.5,   1,      0.5),
-    "trial_end":                    (0,     0,      0),
-}
-
 class BatchPosthocTriggerFix:
-    def __init__(self, lab, inpath, outpath, samp_uncertainty=10, high_accuracy=False, only_middle=True, nth_best=1, allow_manual_mode=True, add_left_to_vmrk=False, diag_plot_1=True, diag_plot_2=False):
+    def __init__(
+            self, 
+            lab, 
+            inpath, 
+            outpath, 
+            samp_uncertainty=10, 
+            high_accuracy=False, 
+            only_middle=True, 
+            nth_best=1, 
+            allow_manual_mode=True, 
+            add_left_to_vmrk=False, 
+            mismatch_plot=True
+            ):
         self.lab = lab
         self.inpath = inpath
         self.outpath = outpath
         self.samp_unc = samp_uncertainty
         self.add_left = add_left_to_vmrk
-        self.diag1, self.diag2 = diag_plot_1, diag_plot_2 # TODO diagplot 3, the match quantifier
+        self.diag1 = mismatch_plot
         self.high_acc, self.middle, self.nth, self.allow_manual = high_accuracy, only_middle, nth_best, allow_manual_mode
-        self.sfreq = get_param_from_excel("lab", lab, "sfreq")
-        if lab == "Hagen":  self.get_all_matching_in_dir_Saskia() # TODO replace with general function
+        self.sfreq = get_param_from_excel(lab, "sfreq")
+        self.eeglab = get_param_from_excel(lab, "analysis") == "EEGLab"
+        if self.eeglab:     self.get_all_matching_in_dir_eeglab()
         else:               self.get_all_matching_in_dir()
 
     def valid_vmrk_naming_scheme(self, f):
@@ -41,28 +39,13 @@ class BatchPosthocTriggerFix:
         all_vmrks = [f for f in os.listdir(self.inpath) if f.endswith(".vmrk") if self.valid_vmrk_naming_scheme(f)]
         all_npzs =  [f for f in os.listdir(self.inpath) if f.endswith(".npz")]
         
-        # TODO replace Saskias code
-        if self.lab == "Hagen":
-            df_all_vmrks = pd.DataFrame(zip(
-                [e.split("_")[0].lower() for e in all_vmrks],
-                [e.split("_")[3] for e in all_vmrks],
-                [""]*len(all_vmrks),
-                all_vmrks),
-            columns=["sbjcode", "task", "group", "vmrk_f"])
-        else:
-            df_all_vmrks = pd.DataFrame(zip(
-                [e.split("_")[2].lower() for e in all_vmrks],
-                [e.split("_")[3].replace(".vmrk", "") for e in all_vmrks],
-                [e.split("_")[1] for e in all_vmrks],
-                # [""]*len(all_vmrks),
-                all_vmrks),
-            columns=["sbjcode", "task", "group", "vmrk_f"])
-        
-        for e in all_npzs: 
-            print(e) # TODO debug
-            print(e.split("_")[-1].replace(".npz", "").lower())
-            print(e.split("_")[1])
-            print(e.split("_")[5])
+        df_all_vmrks = pd.DataFrame(zip(
+            [e.split("_")[2].lower() for e in all_vmrks],
+            [e.split("_")[3].replace(".vmrk", "") for e in all_vmrks],
+            [e.split("_")[1] for e in all_vmrks],
+            # [""]*len(all_vmrks),
+            all_vmrks),
+        columns=["sbjcode", "task", "group", "vmrk_f"])
         
         df_all_npzs = pd.DataFrame(zip(
             [e.split("_")[-1].replace(".npz", "").lower() for e in all_npzs],
@@ -71,17 +54,13 @@ class BatchPosthocTriggerFix:
             # [""]*len(all_npzs),
             all_npzs),
         columns=["sbjcode", "task", "group", "npz_f"])
-        
-        # display(df_all_npzs.head())
-        # display(df_all_vmrks.head())
 
         self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group"], how="left")
-        # display(self.matches_df)
         self.matches_df = self.matches_df.dropna()
 
         self.matches_df.to_excel(self.outpath/"match.xlsx")
 
-    def get_all_matching_in_dir(self):
+    def get_all_matching_in_dir_eeglab(self):
         # TODO remove function in release
         all_vmrks = [f for f in os.listdir(self.inpath) if f.endswith("_fixed.txt")]
         all_npzs =  [f for f in os.listdir(self.inpath) if f.endswith(".npz")]
@@ -92,6 +71,7 @@ class BatchPosthocTriggerFix:
             [""]*len(all_vmrks),
             all_vmrks),
         columns=["sbjcode", "task", "group", "vmrk_f"])
+
         df_all_npzs = pd.DataFrame(zip(
             [e.split("_")[-1].replace(".npz", "").lower() for e in all_npzs],
             [e.split("_")[1] for e in all_npzs],
@@ -100,7 +80,6 @@ class BatchPosthocTriggerFix:
         columns=["sbjcode", "task", "group", "npz_f"])
 
         self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group"], how="left")
-
         self.matches_df = self.matches_df.dropna()
 
     def apply_fix_functions(self, row):
@@ -153,7 +132,7 @@ class Log_EEG_Match():
         
     def load_dfs(self):
         # TODO move away from this lab hardcoding
-        if self.batch.lab == "Hagen": 
+        if self.batch.eeglab: 
             self.vmrk = EEGLabOutputDF(self.batch.inpath/self.vmrk_f)
             self.npz = NpzDF(self.batch.inpath/self.npz_f)
         else:                    
@@ -295,7 +274,7 @@ class Log_EEG_Match():
             # (self.split_dfs["match_vmrk"]["time"] < stop_time  - 0.2*total_dur)
             ]
 
-        nom   = len(trigs_only_vmrk) + len(trigs_only_npz) # TODO only_npz: overestimated with the double npz trigger situation in Hagen
+        nom   = len(trigs_only_vmrk) + len(trigs_only_npz)
         denom = len(trigs_match_vmrk)
 
         if denom == 0: return True # no matches found!
@@ -355,76 +334,37 @@ class Log_EEG_Match():
         vlines_df_npz, = ax.plot(df_npz["time"], [1]*len(df_npz), "|", color="green", markersize=100)
         ax.set_xlabel("time in samples")
 
-        def update(factor=1.0, offset=0.0):
-            vlines_df_npz.set_xdata(df_npz["time"]*factor + offset)
+        def update(factor=1.0, offset=0.0, fine_offset=0.0):
+            vlines_df_npz.set_xdata(df_npz["time"]*factor + offset + fine_offset)
 
-        widgets.interact(
-            update, 
-            factor=widgets.FloatSlider(
-                min=0, 
-                max=2.0, 
-                step=0.001, 
-                value=1.0, 
-                layout=slider_layout
-            ), 
-            offset=widgets.FloatSlider(
-                min=-offset_max, 
-                max=offset_max, 
-                step=offset_max/10000, 
-                value=0.0, 
-                layout=slider_layout
-            )
+        factor_slider = widgets.FloatSlider(
+            min=0, 
+            max=2.0, 
+            step=0.001, 
+            value=1.0, 
+            layout=slider_layout
         )
-
-    def plot_raw_without_matches(self, scale_order=4):
-        # visual plotting of mismatches
-
-        limit = 10**scale_order
-
-        df_vmrk = self.dfs["vmrk"]
-        df_npz = self.dfs["npz"]
-
-        # TODO debug only keep trial starts:
-        df_vmrk = df_vmrk[df_vmrk["label"].str.startswith("trial_")]
-        df_npz = df_npz[df_npz["label"].str.startswith("trial_")]
-
-        print(len(df_vmrk), len(df_npz))
-
-        all_labels = list(set(df_vmrk["label"].tolist() + df_npz["label"].tolist()))
-
-        f, ax = plt.subplots(1, 2, facecolor="white", sharey=True, figsize=(20, 2))
-
-        # TODO debug remove list
-        for l in all_labels:
-            ax[0].vlines(df_vmrk[df_vmrk["label"] == l]["time"],  1, 2, color=trialtype_colors[l])
-            ax[0].vlines(df_npz[df_npz["label"] == l]["time"], 0, 1, color=trialtype_colors[l])
-        ax[0].set_xlabel("time in samples")
-
-        ax[1].vlines(df_vmrk["time"][
-            (df_vmrk["time"] < limit) &
-            (df_vmrk["time"] > 0)
-            ],  1, 2, color="black")
-        ax[1].vlines(df_npz["time"][
-            (df_npz["time"] < limit) &
-            (df_npz["time"] > 0)
-            ],  0, 1, color="green")
-        ax[1].set_xlim([0, limit])
-        ax[1].set_xlabel("time in samples")
-
-        # if storename: plt.savefig(outpath/f'{Path(storename).stem}.png')
-        plt.yticks([0.5, 1.5], ["npz", "vmrk"])
-
-        plt.show()
-
+        offset_slider = widgets.FloatSlider(
+            min=-offset_max, 
+            max=offset_max, 
+            step=0.5, 
+            value=0.0, 
+            layout=slider_layout
+        )
+        fine_offset_slider = widgets.FloatSlider(
+            min=-1000, 
+            max=1000, 
+            step=0.001, 
+            value=0.0, 
+            layout=slider_layout
+        )
+        
+        widgets.interact(update, factor=factor_slider, offset=offset_slider, fine_offset=fine_offset_slider)
+            
     def get_correction_num(self):
         # note: correction factor must be ADDED
         matched_times = [self.split_dfs[f"match_{part}"]["time"].tolist() for part in ["npz", "vmrk"]]
         time_diffs = [npzt - vmrkt for npzt, vmrkt in zip(*matched_times)]
-
-        if self.batch.diag2:
-            plt.figure(facecolor="white")
-            plt.plot(sorted(time_diffs))
-            plt.show()
 
         if len(time_diffs) == 0: time_diffs = [0]
         return round(np.mean(time_diffs))
@@ -456,22 +396,6 @@ class Log_EEG_Match():
 
         return out_df
 
-    def write_vmrk(self, out_df, vmrk_fname, lab="DD", suffix=""):
-        # BIG TODO
-
-        sfreq = {"DD": 500, "Hagen": 1000}[lab]
-        sample_time_ms = {"DD": 2, "Hagen": 1}[lab]
-        header = [
-            f"Sampling rate: {sfreq}Hz, SamplingInterval: {sample_time_ms}ms",
-            "Type, Description, Position, Length, Channel"
-        ]
-        file_lines = [l for l in header]
-        for i, row in out_df.iterrows():
-            file_lines.append(f"Stimulus, S{row['trig']:3d}, {row['time']}, 1, All")
-
-        with open(outpath/f"{Path(vmrk_fname).stem}{suffix}.txt", "w") as f:
-            f.writelines(l + "\n" for l in file_lines)
-
     def write_txt(self, out_df, out_fname, suffix=""):
         df = pd.DataFrame()
         
@@ -479,25 +403,6 @@ class Log_EEG_Match():
         df["latency"] = [e/self.batch.sfreq for e in out_df["time"]]
         df["type"] = [f"S{round(e):3d}" for e in out_df["trig"]]
         df.to_csv(self.batch.outpath/f"{Path(out_fname).stem}{suffix}.txt", sep=",", index=None)
-
-    def manual_optimizer(self, last_order=5):
-        # replaces brute force
-        # user inputs number, and then fit is shown
-        self.plot_raw_without_matches(last_order)
-        # self.batch.nth = int(input("enter a number by how much to shift: "))
-        self.init_split_dfs()
-
-        adjust_number = IntegerInput().get_value()
-
-        last_order = len(str(adjust_number).replace("-", ""))
-        self.adjust_npz_times(adjust_number, self.dfs["npz"]["time"])
-
-        bad = self.divide_dfs()
-
-        if adjust_number == 0: return True # possibility to quit
-
-        self.diag_plot_mismatches(f"manual attempt") # TODO remove debug
-        if bad: self.manual_optimizer(last_order) # TODO careful: infinite loop
 
     def brute_force(self):
         # print(f"EmuWarning: fixing failed initially for match for {self.npz_f}/{self.vmrk_f}; try brute force solution search in up to 10 attempts, might take a bit of time... (up to 10 times the previous solutions)") # TODO does this every time, don't know why

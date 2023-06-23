@@ -25,10 +25,29 @@ def translate_trig_num(trig_num):
     else:
         return "__GHOST__"
     
-def get_param_from_excel(task_or_lab, ID_str, info_str):
-    params_file = root_path/"data"/f"{task_or_lab}_parameters.xlsx"
+def get_param_from_excel(ID_str, info_str):
+    params_file = root_path/"data"/f"lab_parameters.xlsx"
     df = pd.read_excel(params_file)
     return df[df[df.columns.tolist()[0]] == ID_str][info_str].tolist()[0]
+
+def parse_npz(npz, key):
+    # npz can be either a filepath to the npz file, or a loaded npz
+    if not type(npz) == np.lib.npyio.NpzFile:
+        npz = np.load(npz, allow_pickle=True)
+
+    assert key in ["lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", "with_practice", "eeg", "debug", "date_time", "sub_id", "experimenter", "window_res", "task_name", "repeats", "trigger", "time_since_init"], 'EmuError: key of parse_npz function must be one of either \n"lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", \n"with_practice", "eeg", "debug", "date_time", "sub_id", "experimenter", \n"window_res", "task_name", "repeats", "trigger", "time_since_init"'
+
+    if key in ["lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", "with_practice", "eeg", "debug"]:
+        out = npz["lab_params"].tolist()[key]
+    elif key in ["date_time", "sub_id", "experimenter", "window_res"]:
+        out = npz["dyn_params"].tolist()[key]
+    elif key in ["task_name", "repeats"]:
+        out = npz["task_params"].tolist()[key]
+    else: #key in ["trigger", "time_since_init"]:
+        out = npz["eeg_triggers"].tolist()[key]
+
+    try: return eval(out)
+    except: return out
 
 ###########################
 #         Classes         #
