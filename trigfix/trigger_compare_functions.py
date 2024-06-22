@@ -158,13 +158,10 @@ class Log_EEG_Match():
             [pd.DataFrame(columns=self.dfs["vmrk"].columns) for _ in range(4)]
             ))
     
-    # TODO: hide from release - maybe too identifying
     def adjust_special(self):
         if self.npz.is_special():
             self.dfs["npz"]["time"] = [t*10 for t in self.dfs["npz"]["time"]]
             self.batch.samp_unc = 200
-        # # TODO REMOVE DEBUG!!!!!!!!!!!!!!!!!!!!!!
-        # self.dfs["npz"]["time"] = [t*1.07 for t in self.dfs["npz"]["time"]] # 1.052
 
     def revert_special(self):
         if self.npz.is_special():
