@@ -1,5 +1,6 @@
 data/inpath/*
 data/outpath/*
+data/testdata/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

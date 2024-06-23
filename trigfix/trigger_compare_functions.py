@@ -89,7 +89,7 @@ class BatchPosthocTriggerFix:
             self)
         log_eeg_match.run_fix_pipeline()
     
-    def apply_fix(self, sbjcodes="all", tasks="all", groups="", only_warnings=True):
+    def apply_fix(self, sbjcodes="all", tasks="all", groups=""):
 
         sub_df = self.matches_df.copy()
         
@@ -113,12 +113,7 @@ class BatchPosthocTriggerFix:
 
         # apply the fix
         for i, row in sub_df.iterrows():
-            if only_warnings:
-                # try: 
-                self.apply_fix_functions(row)
-                # except Exception as e: print(f"EmuWarning for match {row['vmrk_f']}-{row['npz_f']}:\n{e}")
-            else:
-                self.apply_fix_functions(row)
+            self.apply_fix_functions(row)
 
 class Log_EEG_Match():
     def __init__(self, vmrk_f, npz_f, sbjcode, task, group, batch):
@@ -157,16 +152,7 @@ class Log_EEG_Match():
             ["match_vmrk", "only_vmrk", "match_npz", "only_npz"],
             [pd.DataFrame(columns=self.dfs["vmrk"].columns) for _ in range(4)]
             ))
-    
-    def adjust_special(self):
-        if self.npz.is_special():
-            self.dfs["npz"]["time"] = [t*10 for t in self.dfs["npz"]["time"]]
-            self.batch.samp_unc = 200
-
-    def revert_special(self):
-        if self.npz.is_special():
-            self.out_df["time"] = [t/10 for t in self.out_df["time"]]
-    
+        
     def closest(self, val, l):
         # yoinked from: https://stackoverflow.com/a/12141207/6465789
         return min(l, key=lambda x:abs(x-val))
@@ -430,11 +416,9 @@ class Log_EEG_Match():
     # until documentation: to understand code, start here, and then work backwards:
     def run_fix_pipeline(self):
 
-        self.adjust_special() # *10 factor (TODO remove from release)
         bad = self.divide_dfs()
         if bad: self.brute_force() # try to auto-fix in case of bad
         if self.batch.diag1: self.diag_plot_mismatches(f"group {self.group}, subject: {self.sbjcode}, task {self.task}")
         self.output_all_but_ghosts() # inits self.out_df
-        self.revert_special() # *10 factor (TODO remove from release)
         # TODO replace with vmrk instead of text
         self.write_txt(self.out_df, self.vmrk_f)

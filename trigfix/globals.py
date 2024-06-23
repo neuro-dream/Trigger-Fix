@@ -252,13 +252,6 @@ class NpzDF(MarkerDF):
         self.plot_pipeline(debug_dat, axx[1]) # TODO debug delete
         plt.show()
 
-    def is_special(self):
-        # TODO remove from release
-        query_ends = []
-        query_ends += [f"HC_{e:03}" for e in [13,14,21,22,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,40,41]]
-        query_ends += [f"ASD_{e:03}" for e in [1, 2]]
-        return any([self.fpath.stem.endswith(e) for e in query_ends])
-
     def adjust_format(self):
         
         self.df["npz_time"] = [round(t*self.npz_sfreq) for t in self.df["time"]]
