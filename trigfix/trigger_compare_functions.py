@@ -5,15 +5,15 @@ pd.options.mode.chained_assignment = None # just hide ennoying errors
 
 class BatchPosthocTriggerFix:
     def __init__(
-            self, 
-            lab, 
+            self,  
             inpath, 
-            outpath, 
+            outpath,
+            lab="Debug", 
             samp_uncertainty=10, 
             high_accuracy=False, 
             only_middle=True, 
             nth_best=1, 
-            allow_manual_mode=True, 
+            allow_manual_mode=True, # TODO rename to "slider mode" or similar
             add_left_to_vmrk=False, 
             mismatch_plot=True
             ):
@@ -172,12 +172,13 @@ class Log_EEG_Match():
         adjusts, adjust_matches = [], []
 
         trial_times = dict([part, self.dfs[part][self.dfs[part]["trig"] == 101]["time"].tolist()] 
-                           for part in ["vmrk", "npz"]) # note: end trigger
+                           for part in ["vmrk", "npz"]) # note: 101 is trial end trigger
         n_npzt = len(trial_times["npz"])
         step = 0.01 if self.batch.high_acc else 0.1
+        # focusing on middle triggers: hence ignores cases when EEG recording started too late and/or stopped too early
         start = 0.25 if self.batch.middle else 0
         stop = 0.75 if self.batch.middle else 1
-        npz_inds = [int(perc*n_npzt) for perc in np.arange(start, stop, step)] + [n_npzt - 1]
+        npz_inds = [int(perc*n_npzt) for perc in np.arange(start, stop, step)] + [n_npzt - 1] # TODO cannot understand this line anymore (24-06-23)
         for trialtvmrk in trial_times["vmrk"]:
             for npz_ind in npz_inds:#[ind_start_npz:ind_stop_npz]:
                 adjust_npz = trialtvmrk - trial_times["npz"][npz_ind]
@@ -187,12 +188,6 @@ class Log_EEG_Match():
                         trial_times["vmrk"], 
                         [e + adjust_npz for e in trial_times["npz"]]
                     )))
-                
-        # # TODO delete debug
-
-        # plt.figure(facecolor="white", figsize=(20, 20))
-        # plt.plot(adjust_matches, adjusts)
-        # plt.show()
 
         return [adjusts, adjust_matches]
 
@@ -273,6 +268,7 @@ class Log_EEG_Match():
         while all([head_inds[part] < len(self.dfs[part]) - 1 for part in ["vmrk", "npz"]]):
             self.split_dfs, head_inds = self.move_heads(head_inds, self.split_dfs)
 
+        # TODO can't understand (state 24-06-23) why these are the same lengths; aren't there expected to be ghost triggers? 
         assert len(self.split_dfs["match_npz"]) == len(self.split_dfs["match_vmrk"]), f"EmuError: matched files are not same len; npz: {len(self.split_dfs['match_npz'])}; vmrk: {len(self.split_dfs['match_vmrk'])} - means function divide_dfs failed"
         return self.is_bad()
     
@@ -393,9 +389,10 @@ class Log_EEG_Match():
         curr_nth = 0
         n_tries = 0
         bad = True
-        n_attempts = 7
+        n_attempts = 7 # TODO parametrize?
         if self.batch.allow_manual: n_attempts = 0
 
+        # TODO add tqdm update bar
         while bad and n_tries < n_attempts: # TODO change back
             self.batch.nth = curr_nth
             self.init_split_dfs()
