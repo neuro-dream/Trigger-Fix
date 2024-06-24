@@ -24,3 +24,13 @@ Basic algorithm:
 	- how these fit value are calculated: as average deviation of each element in the shorter list from the closest element in the longer list. (i.e. lower values indicate better alignment)
 	- then taking the best fit, unless the visual inspection by user indicates that "best" solution is systematically off - user can then specify to select 2nd, 3rd, ... nth best fit solution
 - diagnostic plot then tells at a glance if/how well the picked solution from brute force search has worked. black lines indicate matches, while colored lines indicate triggers that only appear in npz or vmrk. if there are few black lines but many red and green lines, this is a strong indicator that the matching needs to be finetuned (by the tweaking params mentioned in the beginning).
+
+Basic algorithm (flowchart; WIP)
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
