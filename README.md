@@ -29,6 +29,7 @@ Basic algorithm (flowchart; WIP)
 
 ```mermaid
 graph TD;
+    A["`Link`"]
     A-->B;
     A-->C;
     B-->D;
