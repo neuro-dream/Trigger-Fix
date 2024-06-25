@@ -8,8 +8,8 @@ Basic algorithm (flowchart; WIP)
 %% (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)
 
 graph LR;
-    A["<b>file selection:</b><br> - sbjcodes<br> - tasks<br> - groups"]
-    B["<b>trigger sorting<br>into matched/unmatched:</b><br><img width="458" alt="trigger_sort_illustration" src='https://github.com/neurodream/Trigger-Fix/assets/117816806/da1ea387-90ca-4b1a-9eca-cee14692169c'>"]
+    A["<b>file selection:</b><br> <p align="left">- sbjcodes<br> - tasks<br> - groups</p>"]
+    B["<b>trigger sorting<br>into matched/unmatched:</b><br>example illustration see below"]
     C["check if too many unmatched"]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
