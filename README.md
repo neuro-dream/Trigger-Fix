@@ -15,6 +15,7 @@ graph LR;
     F["<b>take nth best fit</b><br>default: 1st best fit"]
     G["<b>write new vmrk file</b>"]
     H["<b>visual inspection <br>(by user) <br>if still bad</b>"]
+    I["<b>parameter tweaking:</b><br>- samp_uncertainty<br>- high_accuracy<br>- only middle<br>- nth_best<br>- ..."]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
     direction TB
@@ -34,6 +35,7 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
 end
 
 A--"batch <br>processing"-->for_each_file_comb;
+H-->|yes|I;
 ```
 
 
