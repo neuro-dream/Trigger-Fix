@@ -11,7 +11,7 @@ graph LR;
     A["<b>file selection:</b><br>- sbjcodes<br> - tasks<br> - groups"]
     B["<b>trigger sorting<br>into matched/unmatched:</b><br>for example illustration, see below"]
     C["<b>check if too many unmatched:</b><br>N_unmatched/N_matched > 20%?"]
-    D["<b>fine-grained temporal offsetting</b>"]
+    D["<b>fine-grained <br>temporal offsetting</b><br>vmrk against npz trigger list"]
     E["<b>fit value calculation:</b><br>average deviation of each element <br> in the shorter list <br>from the closest element <br>in the longer list"]
     F["<b>take nth best fit</b><br>default: 1st best fit"]
     G["<b>write new vmrk file</b>"]
