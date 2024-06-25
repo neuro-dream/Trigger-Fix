@@ -4,8 +4,11 @@ aligns and matches triggers from log file and EEG file
 Basic algorithm (flowchart; WIP)
 
 ```mermaid
+
+%% (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)
+
 graph LR;
-    A["<b>file selection:</b><br> - sbjcodes<br> - tasks<br> - groups<br> (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)"]
+    A["<b>file selection:</b><br> - sbjcodes<br> - tasks<br> - groups"]
     B["<b>trigger sorting<br>into matched/unmatched:</b><br><img width="458" alt="trigger_sort_illustration" src='https://github.com/neurodream/Trigger-Fix/assets/117816806/da1ea387-90ca-4b1a-9eca-cee14692169c'>"]
     C["check if too many unmatched"]
 
@@ -20,7 +23,7 @@ end
     %% C-->D;
 ```
 
-Illustration of function ```[sort_trigs_into_matched_unmatched]()```:
+Illustration of function ```sort_trigs_into_matched_unmatched```:
 
 <img width="887" alt="trigger_sort_illustration_long" src="https://github.com/neurodream/Trigger-Fix/assets/117816806/6502e69c-d122-45f2-a09f-acb25a56a70d">
 
