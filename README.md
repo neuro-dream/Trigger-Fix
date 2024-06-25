@@ -29,11 +29,11 @@ Basic algorithm (flowchart; WIP)
 
 ```mermaid
 graph LR;
-    A["**file selection:**
+    A["`**file selection:**
 	- sbjcodes
 	- tasks
 	- groups
-	(function: <a href='[https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170](https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92)'>apply_fix</a>)"]
+	(function: <a href='[https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170](https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92)'>apply_fix</a>)`"]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
     direction TB
