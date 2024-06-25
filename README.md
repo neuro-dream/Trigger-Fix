@@ -1,14 +1,25 @@
 # Trigger-Fix
 aligns and matches triggers from log file and EEG file
 
-How to use:
-- clone this repo
-- adjust ```data/lab_parameters.xlsx``` if necessary: adding an entry with your lab-specific parameters.
-- ```cd Trigger-Fix```
-- ```conda env create --name trigfix-env --file environment.yml```
-- ```conda activate trigfix-env```
-- ```pip install -e .```
-- ```code scripts/trigger_corr.ipynb```
+Basic algorithm (flowchart; WIP)
+
+```mermaid
+graph LR;
+    A["`**file selection:**
+	- sbjcodes
+	- tasks
+	- groups`"
+	"(function: <a href='[https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170](https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92)'>apply_fix</a>)"]
+
+subgraph for_each_file_comb["for each npz-vmrk combination:"]
+    direction TB
+end
+
+    A-->for_each_file_comb;
+    %% A-->C;
+    %% B-->D;
+    %% C-->D;
+```
 
 Basic algorithm:
 - processing happens in batches via specifying parameters for file selection and for tweaking the fitting process
@@ -25,22 +36,11 @@ Basic algorithm:
 	- then taking the best fit, unless the visual inspection by user indicates that "best" solution is systematically off - user can then specify to select 2nd, 3rd, ... nth best fit solution
 - diagnostic plot then tells at a glance if/how well the picked solution from brute force search has worked. black lines indicate matches, while colored lines indicate triggers that only appear in npz or vmrk. if there are few black lines but many red and green lines, this is a strong indicator that the matching needs to be finetuned (by the tweaking params mentioned in the beginning).
 
-Basic algorithm (flowchart; WIP)
-
-```mermaid
-graph LR;
-    A["`**file selection:**
-	- sbjcodes
-	- tasks
-	- groups`
-	(function: <a href='[https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170](https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92)'>apply_fix</a>)"]
-
-subgraph for_each_file_comb["for each npz-vmrk combination:"]
-    direction TB
-end
-
-    A-->for_each_file_comb;
-    %% A-->C;
-    %% B-->D;
-    %% C-->D;
-```
+How to use:
+- clone this repo
+- adjust ```data/lab_parameters.xlsx``` if necessary: adding an entry with your lab-specific parameters.
+- ```cd Trigger-Fix```
+- ```conda env create --name trigfix-env --file environment.yml```
+- ```conda activate trigfix-env```
+- ```pip install -e .```
+- ```code scripts/trigger_corr.ipynb```
