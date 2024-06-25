@@ -32,10 +32,10 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
     %% for_each_file_comb -- "until<br>all files<br>processed" --> for_each_file_comb;
     %% G--"until<br>all files<br>processed" --> for_each_file_comb;
     H-->|no|G;
+    H-->|yes|I;
 end
 
 A--"batch <br>processing"-->for_each_file_comb;
-H-->|yes|I;
 %% I-->A;
 ```
 
