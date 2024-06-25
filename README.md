@@ -29,10 +29,10 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
     for_each_offset-->F;
     F-->H;
     %% for_each_file_comb -- "until<br>all files<br>processed" --> for_each_file_comb;
+    G--"until<br>all files<br>processed" --> for_each_file_comb;
 end
 
 A--"batch <br>processing"-->for_each_file_comb;
-G--"until<br>all files<br>processed" --> for_each_file_comb;
 ```
 
 
