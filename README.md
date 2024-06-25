@@ -34,6 +34,7 @@ end
 
 
     A--"batch <br>processing"-->for_each_file_comb;
+    for_each_file_comb--"until<br>all files<br>processed"-->for_each_file_comb;
     
     %% A-->C;
     %% B-->D;
