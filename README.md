@@ -15,7 +15,7 @@ graph LR;
     E["<b>fit value calculation:</b><br>average deviation of each element <br> in the shorter list <br>from the closest element <br>in the longer list"]
     F["<b>take nth best fit</b><br>default: 1st best fit"]
     G["<b>write new vmrk file</b>"]
-    H["<b>visual inspection by user <br>if still bad</b>"]
+    H["<b>visual inspection <br>(by user) <br>if still bad</b>"]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
     direction TB
@@ -28,6 +28,7 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
     end
     D-->for_each_offset;
     for_each_offset-->F;
+    F-->H;
 end
 
 
