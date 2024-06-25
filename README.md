@@ -3,6 +3,7 @@ aligns and matches triggers from log file and EEG file
 
 Basic algorithm (flowchart; WIP)
 
+```mermaid
 %% (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)
 
 graph LR;
@@ -31,6 +32,7 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
 end
 
 A--"batch <br>processing"-->for_each_file_comb;
+```
 
 
 Illustration of function ```sort_trigs_into_matched_unmatched```:
