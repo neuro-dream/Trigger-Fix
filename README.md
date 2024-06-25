@@ -11,7 +11,7 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
     direction TB
 end
 
-    A-->for_each_file_comb;
+    A--batch[batch processing]-->for_each_file_comb;
     %% A-->C;
     %% B-->D;
     %% C-->D;
