@@ -35,7 +35,7 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
     H-->|no|G;
 end
 
-XX->A;
+XX-->A;
 A--"batch <br>processing"-->for_each_file_comb;
 H-->|yes|I;
 I-->A;
