@@ -29,7 +29,7 @@ Basic algorithm (flowchart; WIP)
 
 ```mermaid
 graph LR;
-    A["select trigger files to adjust via
+    A["file selection:
 	- sbjcodes
 	- tasks
 	- groups
