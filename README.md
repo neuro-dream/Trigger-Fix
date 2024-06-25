@@ -22,15 +22,17 @@ subgraph for_each_file_comb["for each npz-vmrk combination:"]
     B-->C;
     C-->|no|G;
     C-->|yes|D;
-    
+    subgraph for_each_offset["for each offset:"]
+        direction TB
+        E
+    end
+    D-->for_each_offset;
 end
 
-subgraph for_each_offset["for each offset:"]
-    E
-end
+
 
     A--"batch <br>processing"-->for_each_file_comb;
-    D-->for_each_offset;
+    
     %% A-->C;
     %% B-->D;
     %% C-->D;
