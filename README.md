@@ -30,7 +30,7 @@ Basic algorithm (flowchart; WIP)
 ```mermaid
 graph TD;
     A[<a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170'>link to function</a>]
-    A-->B;
+    -- inputs --> A-->B;
     A-->C;
     B-->D;
     C-->D;
