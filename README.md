@@ -33,7 +33,7 @@ graph TD;
 	- sbjcodes
 	- tasks
 	- groups
-	in " <a href='[https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170](https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92)'>trigger_compare_functions.BatchPosthocTriggerFix.apply_fix</a>]
+	in <a href='[https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L170](https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92)'>trigger_compare_functions.BatchPosthocTriggerFix.apply_fix</a>"]
 
     -- inputs --> A-->B;
     A-->C;
