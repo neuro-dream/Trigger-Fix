@@ -12,7 +12,7 @@ graph LR;
     B["<b>trigger sorting<br>into matched/unmatched:</b><br>for example illustration, see below"]
     C["<b>check if too many unmatched:</b><br>N_unmatched/N_matched > 20%?"]
     D["<b>fine-grained temporal offsetting</b>"]
-    E["<b>calculate fit value:</b><br>average deviation of each element in the shorter list <br>from the closest element in the longer list"]
+    E["<b>fit value calculation:</b><br>average deviation of each element <br> in the shorter list <br>from the closest element <br>in the longer list"]
     F["<b>take nth best fit</b><br>default: 1st best fit"]
     G["<b>write new vmrk file</b>"]
     H["<b>visual inspection by user <br>if still bad</b>"]
