@@ -6,7 +6,7 @@ Basic algorithm (flowchart; WIP)
 ```mermaid
 %% (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)
 
-graph LR;
+graph TD;
     A["<b>file selection:</b><br>- sbjcodes<br> - tasks<br> - groups"]
     B["<b>trigger sorting<br>into matched/unmatched:</b><br>for example illustration, see below"]
     C["<b>check if too many unmatched:</b><br>N_unmatched/N_matched > 20%?"]
