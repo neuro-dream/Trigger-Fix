@@ -8,9 +8,9 @@ Basic algorithm (flowchart; WIP)
 %% (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)
 
 graph LR;
-    A["<b>file selection:</b><br> <p align="left">- sbjcodes<br> - tasks<br> - groups</p>"]
-    B["<b>trigger sorting<br>into matched/unmatched:</b><br>example illustration see below"]
-    C["check if too many unmatched"]
+    A["<b>file selection:</b><br>- sbjcodes<br> - tasks<br> - groups"]
+    B["<b>trigger sorting<br>into matched/unmatched:</b><br>for example illustration, see below"]
+    C["<b>check if too many unmatched:</b><br>N_unmatched/N_matched > 20%?"]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
     direction TB
