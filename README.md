@@ -11,10 +11,16 @@ graph LR;
     A["<b>file selection:</b><br>- sbjcodes<br> - tasks<br> - groups"]
     B["<b>trigger sorting<br>into matched/unmatched:</b><br>for example illustration, see below"]
     C["<b>check if too many unmatched:</b><br>N_unmatched/N_matched > 20%?"]
+    D["<b>fine-grained temporal offsetting</b>"]
+    E["<b>calculate fit value:</b><br>average deviation of each element in the shorter list <br>from the closest element in the longer list"]
+    F["<b>take nth best fit</b><br>default: 1st best fit"]
+    G["<b>write new vmrk file</b>"]
+    H["<b>visual inspection by user <br>if still bad</b>"]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
     direction TB
     B-->C;
+    C-->|no|G;
 end
 
     A--"batch <br>processing"-->for_each_file_comb;
