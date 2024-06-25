@@ -36,6 +36,7 @@ end
 
 A--"batch <br>processing"-->for_each_file_comb;
 H-->|yes|I;
+I-->A;
 ```
 
 
