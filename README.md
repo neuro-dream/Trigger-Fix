@@ -20,6 +20,10 @@ end
     %% C-->D;
 ```
 
+Illustration of function ```[sort_trigs_into_matched_unmatched]()```:
+
+<img width="887" alt="trigger_sort_illustration_long" src="https://github.com/neurodream/Trigger-Fix/assets/117816806/6502e69c-d122-45f2-a09f-acb25a56a70d">
+
 Basic algorithm:
 - processing happens in batches via specifying parameters for file selection and for tweaking the fitting process
 - initial attempt at aligning triggers via "moving heads" (i.e. incrementing indices) function:
