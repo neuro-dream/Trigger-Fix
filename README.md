@@ -6,7 +6,7 @@ Basic algorithm (flowchart; WIP)
 ```mermaid
 graph LR;
     A["<b>file selection:</b><br> - sbjcodes<br> - tasks<br> - groups<br> (function: <a href='https://github.com/neurodream/Trigger-Fix/blob/main/trigfix/trigger_compare_functions.py#L92'>apply_fix</a>)"]
-    B["sorting triggers into matched/unmatched:"]
+    B["<b>trigger sorting<br>into matched/unmatched:</b>"]
     C["check if too many unmatched"]
 
 subgraph for_each_file_comb["for each npz-vmrk combination:"]
