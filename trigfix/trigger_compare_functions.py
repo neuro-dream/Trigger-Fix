@@ -30,30 +30,37 @@ class BatchPosthocTriggerFix:
         else:               self.get_all_matching_in_dir()
 
     def valid_vmrk_naming_scheme(self, f):
-        assert len(f.split("_")) in [3, 4], f"EmuError: vmrk files need to have the form \nEmu_group_sbjcode_task.vmrk or \nEmu_sbjcode_task.vmrk \n(checked file {f})\nPlease ensure ALL vmrk filenames in {self.inpath} follow this form."
-        assert f.split("_")[-1].replace(".vmrk", "") in ["A", "B", "C", "D"], f"EmuError: task not found in vmrk filename {f}. Please ensure that ALL vmrk filenames in {self.inpath} follow the form Emu_group_sbjcode_task.vmrk or Emu_sbjcode_task.vmrk. (checked file {f})\nSplit the vmrks into the separate tasks if necessary."
+        # assert len(f.split("_")) in [3, 4], f"EmuError: vmrk files need to have the form \nEmu_group_sbjcode_task.vmrk or \nEmu_sbjcode_task.vmrk \n(checked file {f})\nPlease ensure ALL vmrk filenames in {self.inpath} follow this form."
+        # assert f.split("_")[-1].replace(".vmrk", "") in ["A", "B", "C", "D"], f"EmuError: task not found in vmrk filename {f}. Please ensure that ALL vmrk filenames in {self.inpath} follow the form Emu_group_sbjcode_task.vmrk or Emu_sbjcode_task.vmrk. (checked file {f})\nSplit the vmrks into the separate tasks if necessary."
         # TODO relax task assertion, if all tasks in file
         return True
 
     def get_all_matching_in_dir(self):
         all_vmrks = [f for f in os.listdir(self.inpath) if f.endswith(".vmrk") if self.valid_vmrk_naming_scheme(f)]
         all_npzs =  [f for f in os.listdir(self.inpath) if f.endswith(".npz")]
+
+        if len(all_vmrks) == 1 and len(all_npzs) == 1:
+
+            df_all_vmrks = pd.DataFrame([("", "", "", all_vmrks[0])], columns=["sbjcode", "task", "group", "vmrk_f"])
+            df_all_npzs  = pd.DataFrame([("", "", "", all_npzs[0])], columns=["sbjcode", "task", "group", "npz_f"])
+
+        else:
         
-        df_all_vmrks = pd.DataFrame(zip(
-            [e.split("_")[2].lower() for e in all_vmrks],
-            [e.split("_")[3].replace(".vmrk", "") for e in all_vmrks],
-            [e.split("_")[1] for e in all_vmrks],
-            # [""]*len(all_vmrks),
-            all_vmrks),
-        columns=["sbjcode", "task", "group", "vmrk_f"])
-        
-        df_all_npzs = pd.DataFrame(zip(
-            [e.split("_")[-1].replace(".npz", "").lower() for e in all_npzs],
-            [e.split("_")[1] for e in all_npzs],
-            [e.split("_")[5] for e in all_npzs],
-            # [""]*len(all_npzs),
-            all_npzs),
-        columns=["sbjcode", "task", "group", "npz_f"])
+            df_all_vmrks = pd.DataFrame(zip(
+                [e.split("_")[2].lower() for e in all_vmrks],
+                [e.split("_")[3].replace(".vmrk", "") for e in all_vmrks],
+                [e.split("_")[1] for e in all_vmrks],
+                # [""]*len(all_vmrks),
+                all_vmrks),
+            columns=["sbjcode", "task", "group", "vmrk_f"])
+            
+            df_all_npzs = pd.DataFrame(zip(
+                [e.split("_")[-1].replace(".npz", "").lower() for e in all_npzs],
+                [e.split("_")[1] for e in all_npzs],
+                [e.split("_")[5] for e in all_npzs],
+                # [""]*len(all_npzs),
+                all_npzs),
+            columns=["sbjcode", "task", "group", "npz_f"])
 
         self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group"], how="left")
         self.matches_df = self.matches_df.dropna()
