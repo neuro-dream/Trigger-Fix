@@ -30,8 +30,8 @@ class BatchPosthocTriggerFix:
         else:               self.get_all_matching_in_dir()
 
     def valid_vmrk_naming_scheme(self, f):
-        # assert len(f.split("_")) in [3, 4], f"EmuError: vmrk files need to have the form \nEmu_group_sbjcode_task.vmrk or \nEmu_sbjcode_task.vmrk \n(checked file {f})\nPlease ensure ALL vmrk filenames in {self.inpath} follow this form."
-        # assert f.split("_")[-1].replace(".vmrk", "") in ["A", "B", "C", "D"], f"EmuError: task not found in vmrk filename {f}. Please ensure that ALL vmrk filenames in {self.inpath} follow the form Emu_group_sbjcode_task.vmrk or Emu_sbjcode_task.vmrk. (checked file {f})\nSplit the vmrks into the separate tasks if necessary."
+        assert len(f.split("_")) in [3, 4], f"EmuError: vmrk files need to have the form \nEmu_group_sbjcode_task.vmrk or \nEmu_sbjcode_task.vmrk \n(checked file {f})\nPlease ensure ALL vmrk filenames in {self.inpath} follow this form."
+        assert f.split("_")[-1].replace(".vmrk", "") in ["A", "B", "C", "D"], f"EmuError: task not found in vmrk filename {f}. Please ensure that ALL vmrk filenames in {self.inpath} follow the form Emu_group_sbjcode_task.vmrk or Emu_sbjcode_task.vmrk. (checked file {f})\nSplit the vmrks into the separate tasks if necessary."
         # TODO relax task assertion, if all tasks in file
         return True
 
