@@ -35,7 +35,7 @@ def parse_npz(npz, key):
     if not type(npz) == np.lib.npyio.NpzFile:
         npz = np.load(npz, allow_pickle=True)
 
-    assert key in ["lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", "with_practice", "eeg", "debug", "date_time", "sub_id", "experimenter", "window_res", "task_name", "repeats", "trigger", "time_since_init"], 'EmuError: key of parse_npz function must be one of either \n"lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", \n"with_practice", "eeg", "debug", "date_time", "sub_id", "experimenter", \n"window_res", "task_name", "repeats", "trigger", "time_since_init"'
+    assert key in ["lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", "with_practice", "eeg", "debug", "date_time", "sub_id", "experimenter", "window_res", "task_name", "repeats", "trigger", "time_since_init"], 'TrigfixError: key of parse_npz function must be one of either \n"lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", \n"with_practice", "eeg", "debug", "date_time", "sub_id", "experimenter", \n"window_res", "task_name", "repeats", "trigger", "time_since_init"'
 
     if key in ["lab_name", "parallel_port_id", "trigger_method", "distance_cm", "input_device", "refresh_rate", "with_practice", "eeg", "debug"]:
         out = npz["lab_params"].tolist()[key]
@@ -159,7 +159,7 @@ class NpzDF(MarkerDF):
         try:
             self.group      = self.fpath.stem.split("_")[5]
         except IndexError:
-            pass#print("EmuWarning: no group found, probably because files from Hagen lab")
+            pass#print("TrigfixWarning: no group found, probably because files from Hagen lab")
     
     def posthoc_add_checksound_triggers(self):
 
@@ -195,7 +195,7 @@ class NpzDF(MarkerDF):
         # remove incorrect trials (probably terminated too early)
         # valid_check_trial_data = [trial for ind, trial in enumerate(check_trial_data) if not ind in incorrect_inds] # TODO issue solved if this line not included - but not quite sure why it makes sense - does npz auto-exclude checktrial triggers that were started again or sth?
         valid_check_trial_data = check_trial_data
-        assert len(valid_check_trial_data) == len(adj_dfs), f"EmuError: {self.f}: \nnot same number of check trial data ({len(valid_check_trial_data)}) \nand traj starts ({len(adj_dfs)}) \n(sth went wrong) - matching not validly possible"
+        assert len(valid_check_trial_data) == len(adj_dfs), f"TrigfixError: {self.f}: \nnot same number of check trial data ({len(valid_check_trial_data)}) \nand traj starts ({len(adj_dfs)}) \n(sth went wrong) - matching not validly possible"
         conv_factor = self.debug_factor
         durs_until_checksound = [(len(data["joystick_input"]) - 2)*conv_factor for data in valid_check_trial_data] # TODO thoroughly check the number of frames (should not reduce effects though because if, then only small & constant shift)
         

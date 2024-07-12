@@ -30,8 +30,8 @@ class BatchPosthocTriggerFix:
         else:               self.get_all_matching_in_dir()
 
     def valid_vmrk_naming_scheme(self, f):
-        assert len(f.split("_")) in [3, 4], f"EmuError: vmrk files need to have the form \nEmu_group_sbjcode_task.vmrk or \nEmu_sbjcode_task.vmrk \n(checked file {f})\nPlease ensure ALL vmrk filenames in {self.inpath} follow this form."
-        assert f.split("_")[-1].replace(".vmrk", "") in ["A", "B", "C", "D"], f"EmuError: task not found in vmrk filename {f}. Please ensure that ALL vmrk filenames in {self.inpath} follow the form Emu_group_sbjcode_task.vmrk or Emu_sbjcode_task.vmrk. (checked file {f})\nSplit the vmrks into the separate tasks if necessary."
+        assert len(f.split("_")) in [3, 4], f"TrigfixError: vmrk files need to have the form \nstudyname_group_sbjcode_task.vmrk or \nstudyname_sbjcode_task.vmrk \n(checked file {f})\nPlease ensure ALL vmrk filenames in {self.inpath} follow this form."
+        assert f.split("_")[-1].replace(".vmrk", "") in ["A", "B", "C", "D"], f"TrigfixError: task not found in vmrk filename {f}. Please ensure that ALL vmrk filenames in {self.inpath} follow the form studyname_group_sbjcode_task.vmrk or studyname_sbjcode_task.vmrk. (checked file {f})\nSplit the vmrks into the separate tasks if necessary."
         # TODO relax task assertion, if all tasks in file
         return True
 
@@ -68,7 +68,7 @@ class BatchPosthocTriggerFix:
         self.matches_df.to_excel(self.outpath/"match.xlsx")
 
     def get_all_matching_in_dir_eeglab(self):
-        # TODO remove function in release
+        # TODO remove function in release & find a more flexible/inclusive approach of file matching
         all_vmrks = [f for f in os.listdir(self.inpath) if f.endswith("_fixed.txt")]
         all_npzs =  [f for f in os.listdir(self.inpath) if f.endswith(".npz")]
 
@@ -86,8 +86,41 @@ class BatchPosthocTriggerFix:
             all_npzs),
         columns=["sbjcode", "task", "group", "npz_f"])
 
-        self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group"], how="left")
-        self.matches_df = self.matches_df.dropna()
+        # make a case distinction if there is a session number - then also match on session
+        len_splitted = [len(s.split("_")) for s in all_vmrks]
+        assert len(set(len_splitted)) == 1, "TrigfixError: please ensure that all marker filenames in the input directory are of the same shape"
+        
+        # session number is included
+
+        if len_splitted[0] == 6:
+            print("HERE1")
+            # find npz pairs
+            grouped_npz = df_all_npzs.groupby(["sbjcode", "task", "group"])
+            assert len(set([len(g) for g in grouped_npz])) == 1 and len(list(grouped_npz)[0]) == 2, "TrigfixError: please ensure that there is exactly one npz file per session in the input folder"
+            for name, group in grouped_npz:
+                date = [row["npz_f"].split("_")[2] for i, row in group.iterrows()]
+                group["date"] = date
+                group = group.sort_values("date")
+                group["session"] = ["1", "2"]
+                df_all_npzs.loc[group.index, 'session'] = group["session"]
+            # add a column for session number
+            session_num = [e.split("_")[4] for e in all_vmrks]
+            df_all_vmrks["session"] = session_num
+
+            display(df_all_npzs)
+            display(df_all_vmrks)
+
+            self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group", "session"], how="left")
+            self.matches_df = self.matches_df.dropna()
+
+        # session number is not included
+        else:
+            print("HERE2")
+
+            self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group"], how="left")
+            self.matches_df = self.matches_df.dropna()
+
+        self.matches_df.to_excel(self.outpath/"match.xlsx")
 
     def apply_fix_functions(self, row):
         log_eeg_match = Log_EEG_Match(
@@ -276,7 +309,7 @@ class Log_EEG_Match():
             self.split_dfs, head_inds = self.move_heads(head_inds, self.split_dfs)
 
         # TODO can't understand (state 24-06-23) why these are the same lengths; aren't there expected to be ghost triggers? 
-        assert len(self.split_dfs["match_npz"]) == len(self.split_dfs["match_vmrk"]), f"EmuError: matched files are not same len; npz: {len(self.split_dfs['match_npz'])}; vmrk: {len(self.split_dfs['match_vmrk'])} - means function divide_dfs failed"
+        assert len(self.split_dfs["match_npz"]) == len(self.split_dfs["match_vmrk"]), f"TrigfixError: matched files are not same len; npz: {len(self.split_dfs['match_npz'])}; vmrk: {len(self.split_dfs['match_vmrk'])} - means function divide_dfs failed"
         return self.is_bad()
     
     def diag_plot_mismatches(self, title="", storename=None):
@@ -391,7 +424,7 @@ class Log_EEG_Match():
         df.to_csv(self.batch.outpath/f"{Path(out_fname).stem}{suffix}.txt", sep=",", index=None)
 
     def brute_force(self):
-        # print(f"EmuWarning: fixing failed initially for match for {self.npz_f}/{self.vmrk_f}; try brute force solution search in up to 10 attempts, might take a bit of time... (up to 10 times the previous solutions)") # TODO does this every time, don't know why
+        # print(f"TrigfixWarning: fixing failed initially for match for {self.npz_f}/{self.vmrk_f}; try brute force solution search in up to 10 attempts, might take a bit of time... (up to 10 times the previous solutions)") # TODO does this every time, don't know why
         orig_nth = self.batch.nth
         curr_nth = 0
         n_tries = 0
@@ -411,10 +444,10 @@ class Log_EEG_Match():
             n_tries += 1
         if bad:
             if self.batch.allow_manual:
-                print(f"EmuWarning: could not fix mismatch of {self.npz_f}/{self.vmrk_f} with brute force in {n_attempts} attempts; going to manual mode")
+                print(f"TrigfixWarning: could not fix mismatch of {self.npz_f}/{self.vmrk_f} with brute force in {n_attempts} attempts; going to manual mode")
                 self.manual_optimizer_slider() # self.manual_optimizer()
             else:
-                print(f"EmuWarning: mismatch of {self.npz_f}/{self.vmrk_f} not fixable with brute force in {n_attempts} attempts and no manual mode allowed; SUGGESTION: note down this subject and try again with other tweaks")
+                print(f"TrigfixWarning: mismatch of {self.npz_f}/{self.vmrk_f} not fixable with brute force in {n_attempts} attempts and no manual mode allowed; SUGGESTION: note down this subject and try again with other tweaks")
         self.batch.nth = orig_nth
 
     # until documentation: to understand code, start here, and then work backwards:
