@@ -93,7 +93,6 @@ class BatchPosthocTriggerFix:
         # session number is included
 
         if len_splitted[0] == 6:
-            print("HERE1")
             # find npz pairs
             grouped_npz = df_all_npzs.groupby(["sbjcode", "task", "group"])
             assert len(set([len(g) for g in grouped_npz])) == 1 and len(list(grouped_npz)[0]) == 2, "TrigfixError: please ensure that there is exactly one npz file per session in the input folder"
@@ -107,15 +106,11 @@ class BatchPosthocTriggerFix:
             session_num = [e.split("_")[4] for e in all_vmrks]
             df_all_vmrks["session"] = session_num
 
-            display(df_all_npzs)
-            display(df_all_vmrks)
-
             self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group", "session"], how="left")
             self.matches_df = self.matches_df.dropna()
 
         # session number is not included
         else:
-            print("HERE2")
 
             self.matches_df = df_all_vmrks.merge(df_all_npzs, on=["sbjcode", "task", "group"], how="left")
             self.matches_df = self.matches_df.dropna()
