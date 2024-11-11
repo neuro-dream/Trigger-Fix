@@ -1,18 +1,23 @@
 # Trigger-Fix
 aligns and matches triggers from log file and EEG file
 
-How to use:
+How to install:
+- if not yet done: install [git and git bash](https://git-scm.com/downloads/win)
 - clone this repo, e.g. in git bash via:
     - ```git clone https://github.com/neurodream/Trigger-Fix/```
 - adjust ```data/lab_parameters.xlsx``` if necessary: adding an entry with your lab-specific parameters.
 - in git bash, move to the directory via:
     - ```cd Trigger-Fix```
-- create environment, once: ```conda env create --name trigfix-env --file environment.yml```
+- create environment via:
+    - ```conda env create --name trigfix-env --file environment.yml```
+- if not yet done: install [VS Code](https://code.visualstudio.com/download)
+ 
+How to use:
+- in git bash, move to the directory
 - activate environment via:
     - ```conda activate trigfix-env```
 - install module via:
     - ```pip install -e .```
-- if not yet done: install [VS Code](https://code.visualstudio.com/download)
 - run VS code to start the trigger fix via:
     - ```code scripts/trigger_corr.ipynb```
 
