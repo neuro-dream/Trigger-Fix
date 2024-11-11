@@ -2,7 +2,8 @@
 aligns and matches triggers from log file and EEG file
 
 How to use:
-- clone this repo
+- clone this repo, e.g. in git bash via:
+    - ```git clone https://github.com/neurodream/Trigger-Fix/```
 - adjust ```data/lab_parameters.xlsx``` if necessary: adding an entry with your lab-specific parameters.
 - in git bash, move to the directory via:
     - ```cd Trigger-Fix```
