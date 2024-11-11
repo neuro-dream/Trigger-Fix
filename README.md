@@ -8,7 +8,9 @@ How to use:
 - create environment, once: ```conda env create --name trigfix-env --file environment.yml```
 - activate environment: ```conda activate trigfix-env```
 - install module: ```pip install -e .```
-- run VS code to start the trigger fix (install [VS Code](https://code.visualstudio.com/download) first for this to work): ```code scripts/trigger_corr.ipynb```
+- if not yet done: install [VS Code](https://code.visualstudio.com/download)
+- run VS code to start the trigger fix via:
+    - ```code scripts/trigger_corr.ipynb```
 
 Basic algorithm (flowchart; WIP)
 
