@@ -4,10 +4,13 @@ aligns and matches triggers from log file and EEG file
 How to use:
 - clone this repo
 - adjust ```data/lab_parameters.xlsx``` if necessary: adding an entry with your lab-specific parameters.
-- ```cd Trigger-Fix```
+- in git bash, move to the directory via:
+    - ```cd Trigger-Fix```
 - create environment, once: ```conda env create --name trigfix-env --file environment.yml```
-- activate environment: ```conda activate trigfix-env```
-- install module: ```pip install -e .```
+- activate environment via:
+    - ```conda activate trigfix-env```
+- install module via:
+    - ```pip install -e .```
 - if not yet done: install [VS Code](https://code.visualstudio.com/download)
 - run VS code to start the trigger fix via:
     - ```code scripts/trigger_corr.ipynb```
